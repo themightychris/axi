@@ -2,12 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=1440, height=1210" />
     <title>Multi-Page Comparison Race | AXI</title>
-    <meta
-      name="description"
-      content="Minimal 3-lane social asset comparing MCP, CLI, and AXI on the Wikipedia multi-page comparison task."
-    />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
       :root {
         --bg: #ff4736;
@@ -17,22 +14,26 @@
         --muted: #6b645b;
         --border: rgba(23, 20, 17, 0.1);
         --shadow: 0 28px 60px rgba(57, 43, 22, 0.12);
-        --axi: #0f766e;
-        --mcp: #b45309;
-        --cli: #2563eb;
       }
 
       * {
         box-sizing: border-box;
       }
 
+      html,
       body {
         margin: 0;
-        min-height: 100vh;
+        padding: 0;
+        width: 1440px;
+        height: 1210px;
+        overflow: hidden;
+      }
+
+      body {
         color: var(--text);
         font-family:
-          "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino,
-          Georgia, serif;
+          "EB Garamond", "Iowan Old Style", "Palatino Linotype", "Book Antiqua",
+          Palatino, Georgia, serif;
         background:
           radial-gradient(
             circle at 10% 10%,
@@ -47,10 +48,15 @@
           linear-gradient(180deg, #ff6a52 0%, var(--bg) 100%);
       }
 
+      [data-composition-id="main"] {
+        width: 1440px;
+        height: 1210px;
+      }
+
       .poster {
-        width: min(100%, 1440px);
-        min-height: 900px;
-        margin: 0 auto;
+        width: 1440px;
+        height: 1210px;
+        margin: 0;
         padding: 24px;
       }
 
@@ -66,14 +72,15 @@
         backdrop-filter: blur(18px);
         box-shadow: var(--shadow);
         padding: 26px;
+        min-height: calc(1210px - 48px);
       }
 
       .eyebrow {
         margin: 0 0 8px;
         color: var(--muted);
         font-family:
-          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
-          "Liberation Mono", "Courier New", monospace;
+          "JetBrains Mono", ui-monospace, "SFMono-Regular", "SF Mono", Menlo,
+          Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         font-size: 13px;
         font-weight: 700;
         letter-spacing: 0.12em;
@@ -83,7 +90,7 @@
       .task {
         margin: 0 0 14px;
         padding: 10px 0 14px;
-        font-size: clamp(24px, 2.6vw, 34px);
+        font-size: 34px;
         font-weight: 700;
         line-height: 0.98;
         letter-spacing: -0.03em;
@@ -122,8 +129,8 @@
       .lane-label {
         margin: 0;
         font-family:
-          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
-          "Liberation Mono", "Courier New", monospace;
+          "JetBrains Mono", ui-monospace, "SFMono-Regular", "SF Mono", Menlo,
+          Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         font-size: 34px;
         font-weight: 800;
         letter-spacing: -0.06em;
@@ -133,8 +140,8 @@
         margin: 6px 0 0;
         color: var(--muted);
         font-family:
-          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
-          "Liberation Mono", "Courier New", monospace;
+          "JetBrains Mono", ui-monospace, "SFMono-Regular", "SF Mono", Menlo,
+          Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         font-size: 13px;
       }
 
@@ -156,8 +163,8 @@
         display: block;
         color: var(--muted);
         font-family:
-          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
-          "Liberation Mono", "Courier New", monospace;
+          "JetBrains Mono", ui-monospace, "SFMono-Regular", "SF Mono", Menlo,
+          Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         font-size: 10px;
         letter-spacing: 0.1em;
         text-transform: uppercase;
@@ -179,6 +186,7 @@
       }
 
       .step {
+        position: relative;
         display: grid;
         align-content: center;
         min-height: 54px;
@@ -187,28 +195,25 @@
         border: 1px solid var(--border);
         background: rgba(255, 255, 255, 0.58);
         opacity: 0.18;
-        transform: translateY(10px) scale(0.985);
-        transition:
-          opacity 280ms ease,
-          transform 280ms ease,
-          box-shadow 280ms ease,
-          background 280ms ease;
+        overflow: hidden;
       }
 
-      .step.active {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-
-      .step.current {
+      .step-highlight {
+        position: absolute;
+        inset: 0;
+        border-radius: 20px;
         background: color-mix(in srgb, var(--lane-color) 12%, white);
         outline: 2px solid color-mix(in srgb, var(--lane-color) 28%, white);
+        outline-offset: -2px;
+        opacity: 0;
+        pointer-events: none;
       }
 
       .step-title {
+        position: relative;
         font-family:
-          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
-          "Liberation Mono", "Courier New", monospace;
+          "JetBrains Mono", ui-monospace, "SFMono-Regular", "SF Mono", Menlo,
+          Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         font-size: 22px;
         font-weight: 700;
         line-height: 1;
@@ -222,40 +227,39 @@
         margin-top: 14px;
         color: var(--muted);
         font-family:
-          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
-          "Liberation Mono", "Courier New", monospace;
+          "JetBrains Mono", ui-monospace, "SFMono-Regular", "SF Mono", Menlo,
+          Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         font-size: 12px;
-      }
-
-      @media (max-width: 1100px) {
-        .lanes {
-          grid-template-columns: 1fr;
-        }
-
-        .lane {
-          min-height: auto;
-        }
       }
     </style>
   </head>
   <body>
-    <main class="poster">
-      <section class="frame">
-        <p class="eyebrow">AXI Browser Benchmark</p>
-        <div class="task">
-          Find designer of Rust, its GitHub stars, and tagline across three
-          sites.
-        </div>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="46"
+      data-width="1440"
+      data-height="1210"
+    >
+      <main class="poster">
+        <section class="frame">
+          <p class="eyebrow">AXI Browser Benchmark</p>
+          <div class="task">
+            Find designer of Rust, its GitHub stars, and tagline across three
+            sites.
+          </div>
 
-        <section class="lanes" id="lanes"></section>
+          <section class="lanes" id="lanes"></section>
 
-        <div class="footer">
-          <span
-            >Metrics shown: Turns, total input tokens, and elapsed time.</span
-          >
-        </div>
-      </section>
-    </main>
+          <div class="footer">
+            <span
+              >Metrics shown: Turns, total input tokens, and elapsed time.</span
+            >
+          </div>
+        </section>
+      </main>
+    </div>
 
     <script>
       const raceData = [
@@ -312,25 +316,23 @@
         },
       ];
 
-      const introDelay = 500;
-      const maxLaneDuration =
-        Math.max(...raceData.map((lane) => lane.metrics.time)) * 1000;
+      const introDelay = 0;
       const lanesRoot = document.getElementById("lanes");
-      const searchParams = new URLSearchParams(window.location.search);
-      const captureMode = searchParams.get("capture") === "1";
-      const elapsedMs = Number(searchParams.get("elapsedMs") ?? "0");
-      let raceStart = 0;
-      let frameId = 0;
 
-      function formatMetric(value, kind) {
-        if (kind === "tokens") return Math.round(value).toLocaleString("en-US");
-        if (kind === "time") return `${value.toFixed(1)}s`;
+      function formatTurns(value) {
         return `${Math.round(value)}`;
       }
+      function formatTokens(value) {
+        return Math.round(value).toLocaleString("en-US");
+      }
+      function formatTime(value) {
+        return `${value.toFixed(1)}s`;
+      }
 
-      function renderLane(lane) {
+      const laneEls = raceData.map((lane, laneIdx) => {
         const article = document.createElement("article");
         article.className = "lane";
+        article.id = `lane-${laneIdx}`;
         article.style.setProperty("--lane-color", lane.color);
         article.innerHTML = `
           <div class="lane-head">
@@ -340,7 +342,7 @@
           <div class="compact-metrics">
             <div class="metric">
               <span class="metric-label">Turns</span>
-              <span class="metric-value" data-metric="turns">0.0</span>
+              <span class="metric-value" data-metric="turns">0</span>
             </div>
             <div class="metric">
               <span class="metric-label">Tokens</span>
@@ -354,8 +356,9 @@
           <div class="steps">
             ${lane.steps
               .map(
-                (step) => `
-                  <div class="step">
+                (step, stepIdx) => `
+                  <div class="step" id="lane-${laneIdx}-step-${stepIdx}">
+                    <div class="step-highlight" id="lane-${laneIdx}-highlight-${stepIdx}"></div>
                     <div class="step-title">${step.title}</div>
                   </div>
                 `,
@@ -365,108 +368,66 @@
         `;
         lanesRoot.appendChild(article);
         return article;
-      }
+      });
 
-      const laneEls = raceData.map(renderLane);
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
 
-      function resetRace() {
-        if (frameId) cancelAnimationFrame(frameId);
-        frameId = 0;
-        laneEls.forEach((laneEl) => {
-          laneEl.querySelector('[data-metric="turns"]').textContent = "0.0";
-          laneEl.querySelector('[data-metric="tokens"]').textContent = "0";
-          laneEl.querySelector('[data-metric="time"]').textContent = "0.0s";
-          laneEl.querySelectorAll(".step").forEach((stepEl) => {
-            stepEl.classList.remove("active", "current");
-          });
-        });
-      }
-
-      function updateLane(lane, laneEl, elapsedMsValue) {
-        const laneDuration = lane.metrics.time * 1000;
-        const laneElapsed = Math.min(elapsedMsValue, laneDuration);
-        const effectiveElapsed = Math.max(0, laneElapsed);
-        const stepDuration =
-          lane.steps.length > 0
-            ? laneDuration / lane.steps.length
-            : laneDuration;
-        const activeSteps =
-          lane.steps.length === 0 || effectiveElapsed <= 0
-            ? 0
-            : Math.min(
-                lane.steps.length,
-                Math.ceil(effectiveElapsed / stepDuration),
-              );
-        const stepFraction =
-          lane.steps.length > 0 ? activeSteps / lane.steps.length : 1;
-        const tokenProgress =
-          laneDuration > 0 ? effectiveElapsed / laneDuration : 1;
+      raceData.forEach((lane, laneIdx) => {
+        const laneDuration = lane.metrics.time;
+        const stepDuration = laneDuration / lane.steps.length;
+        const laneStart = introDelay;
+        const laneEl = laneEls[laneIdx];
         const turnsEl = laneEl.querySelector('[data-metric="turns"]');
         const tokensEl = laneEl.querySelector('[data-metric="tokens"]');
         const timeEl = laneEl.querySelector('[data-metric="time"]');
-        const steps = [...laneEl.querySelectorAll(".step")];
 
-        turnsEl.textContent = formatMetric(
-          lane.metrics.turns * stepFraction,
-          "turns",
+        const proxy = { turns: 0, tokens: 0, time: 0 };
+
+        tl.to(
+          proxy,
+          {
+            turns: lane.metrics.turns,
+            tokens: lane.metrics.tokens,
+            time: lane.metrics.time,
+            duration: laneDuration,
+            ease: "none",
+            onUpdate() {
+              turnsEl.textContent = formatTurns(proxy.turns);
+              tokensEl.textContent = formatTokens(proxy.tokens);
+              timeEl.textContent = formatTime(proxy.time);
+            },
+          },
+          laneStart,
         );
-        tokensEl.textContent = formatMetric(
-          lane.metrics.tokens * tokenProgress,
-          "tokens",
-        );
-        timeEl.textContent = formatMetric(effectiveElapsed / 1000, "time");
 
-        steps.forEach((stepEl, stepIndex) => {
-          const isActive = stepIndex < activeSteps;
-          const isCurrent =
-            isActive &&
-            stepIndex === activeSteps - 1 &&
-            effectiveElapsed < laneDuration;
-          stepEl.classList.toggle("active", isActive);
-          stepEl.classList.toggle("current", isCurrent);
+        lane.steps.forEach((step, stepIdx) => {
+          const stepTime = laneStart + stepIdx * stepDuration;
+          const stepSel = `#lane-${laneIdx}-step-${stepIdx}`;
+          const highlightSel = `#lane-${laneIdx}-highlight-${stepIdx}`;
+
+          tl.to(
+            stepSel,
+            { opacity: 1, duration: 0.28, ease: "power2.out" },
+            stepTime,
+          );
+
+          tl.to(
+            highlightSel,
+            { opacity: 1, duration: 0.18, ease: "power2.out" },
+            stepTime,
+          );
+
+          const nextTime = laneStart + (stepIdx + 1) * stepDuration;
+          tl.to(
+            highlightSel,
+            { opacity: 0, duration: 0.22, ease: "power2.in" },
+            nextTime,
+          );
         });
-      }
+      });
 
-      function renderRace(globalElapsed) {
-        const elapsed = Math.max(0, globalElapsed);
-
-        raceData.forEach((lane, laneIndex) => {
-          updateLane(lane, laneEls[laneIndex], elapsed);
-        });
-      }
-
-      function tick(now) {
-        const globalElapsed = now - raceStart;
-        renderRace(globalElapsed);
-
-        if (globalElapsed < maxLaneDuration) {
-          frameId = requestAnimationFrame(tick);
-        } else {
-          frameId = 0;
-        }
-      }
-
-      function playRace() {
-        resetRace();
-        raceStart = performance.now() + introDelay;
-        frameId = requestAnimationFrame(tick);
-      }
-
-      window.__AXI_RACE_CAPTURE__ = {
-        maxLaneDuration,
-        setElapsedMs(value) {
-          const safeValue = Number.isFinite(value) ? value : 0;
-          resetRace();
-          renderRace(safeValue);
-        },
-      };
-
-      if (captureMode) {
-        resetRace();
-        renderRace(elapsedMs);
-      } else {
-        playRace();
-      }
+      window.__timelines["main"] = tl;
     </script>
   </body>
 </html>

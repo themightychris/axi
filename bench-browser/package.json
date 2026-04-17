@@ -7,7 +7,7 @@
     "build": "tsc",
     "test": "vitest run",
     "bench": "tsx src/cli.ts",
-    "render:social": "tsx scripts/render-social-video.ts"
+    "render:social": "cd social && npx hyperframes render --output=../../docs/social/rendered/race.mp4"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",

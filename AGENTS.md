@@ -41,8 +41,10 @@ npm test           # Run bench tests (vitest)
 
 ```sh
 cd bench-browser
-npm run render:social -- --skip-gif   # Render docs/social/race.html to a timestamped MP4 in docs/social/rendered/
+npm run render:social   # Render social/index.html via HyperFrames to docs/social/rendered/race.mp4
 ```
+
+The source composition is `bench-browser/social/` (a HyperFrames project). Edit `social/index.html` for content/animation; see `social/DESIGN.md` for the visual identity. Use the `/hyperframes` skill when modifying the composition.
 
 Requires Node.js >= 20 and `gh` CLI installed and authenticated.
 
