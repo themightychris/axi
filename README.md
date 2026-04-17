@@ -107,7 +107,12 @@ npm run bench -- matrix --repeat 5
 
 # Generate summary report
 npm run bench -- report
+
+# Render the social video
+npm run render:social
 ```
+
+The HyperFrames composition for the social asset lives in `bench-browser/social/`. Edit `social/index.html` for the animation and render `docs/social/rendered/race.mp4` with `npm run render:social`.
 
 Published results (490 runs): [`bench-browser/published-results/report.md`](bench-browser/published-results/report.md)
 
