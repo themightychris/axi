@@ -424,6 +424,7 @@
             { opacity: 0, duration: 0.22, ease: "power2.in" },
             nextTime,
           );
+          tl.set(highlightSel, { opacity: 0, visibility: "hidden" }, nextTime + 0.22);
         });
       });
 
