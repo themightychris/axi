@@ -292,6 +292,7 @@ describe("runAxiCli", () => {
       expect.objectContaining({
         marker: "gh-axi",
         execPath: "/Users/me/src/gh-axi/dist/bin/gh-axi.js",
+        binaryNames: ["gh-axi"],
       }),
     );
 

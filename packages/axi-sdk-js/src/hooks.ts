@@ -1,6 +1,13 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  realpathSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { homedir } from "node:os";
-import { basename, dirname, join, resolve } from "node:path";
+import { basename, delimiter, dirname, join, resolve } from "node:path";
 
 export interface HookEntry {
   type?: string;
@@ -37,10 +44,17 @@ export interface NodeAxiExecPathPolicy {
 export interface InstallSessionStartHooksOptions {
   marker: string;
   execPath?: string;
+  binaryNames?: string[];
   timeoutSeconds?: number;
   homeDir?: string;
   shouldInstall?: (execPath: string) => boolean;
   onError?: (message: string) => void;
+}
+
+export interface PortableHookCommandContext {
+  pathEntries: string[];
+  pathExtensions: string[];
+  resolveRealPath: (absolutePath: string) => string | undefined;
 }
 
 function isManagedHook(hook: HookEntry | undefined, marker: string): boolean {
@@ -187,6 +201,64 @@ export function computeCodexConfigUpdate(content: string): [string, boolean] {
   ];
 }
 
+export function resolvePortableHookCommand(
+  execPath: string,
+  binaryNames: string[],
+  marker: string,
+  context: PortableHookCommandContext,
+): string {
+  if (binaryNames.length === 0) {
+    return execPath;
+  }
+
+  const resolvedExec = context.resolveRealPath(execPath);
+  if (!resolvedExec) {
+    return execPath;
+  }
+
+  for (const name of binaryNames) {
+    if (!name.includes(marker)) {
+      continue;
+    }
+    for (const dir of context.pathEntries) {
+      if (!dir) continue;
+      for (const ext of context.pathExtensions) {
+        const candidate = join(dir, `${name}${ext}`);
+        const resolvedCandidate = context.resolveRealPath(candidate);
+        if (resolvedCandidate && resolvedCandidate === resolvedExec) {
+          return name;
+        }
+      }
+    }
+  }
+
+  return execPath;
+}
+
+function buildDefaultPortableCommandContext(): PortableHookCommandContext {
+  const rawPath = process.env.PATH ?? process.env.Path ?? "";
+  const pathEntries = rawPath.split(delimiter).filter(Boolean);
+  const pathExtensions =
+    process.platform === "win32"
+      ? (process.env.PATHEXT ?? ".COM;.EXE;.BAT;.CMD").split(";")
+      : [""];
+  return {
+    pathEntries,
+    pathExtensions,
+    resolveRealPath: (absolutePath) => {
+      try {
+        const stat = statSync(absolutePath);
+        if (!stat.isFile()) {
+          return undefined;
+        }
+        return realpathSync(absolutePath);
+      } catch {
+        return undefined;
+      }
+    },
+  };
+}
+
 export function shouldInstallHooksForNodeAxiExecPath(
   execPath: string,
   policy: NodeAxiExecPathPolicy,
@@ -220,6 +292,13 @@ export function installSessionStartHooks(
     return;
   }
 
+  const command = resolvePortableHookCommand(
+    execPath,
+    options.binaryNames ?? [],
+    options.marker,
+    buildDefaultPortableCommandContext(),
+  );
+
   const home = options.homeDir ?? homedir();
   const jsonTargets = [
     join(home, ".claude", "settings.json"),
@@ -235,7 +314,7 @@ export function installSessionStartHooks(
         : {};
       const [updated, changed] = computeSessionStartHookUpdate(current, {
         marker: options.marker,
-        command: execPath,
+        command,
         timeoutSeconds: options.timeoutSeconds,
       });
 

@@ -194,6 +194,7 @@ function installHooks(options: false | AxiCliHookOptions | undefined): void {
   installSessionStartHooks({
     marker,
     execPath: options.execPath ?? inferred.execPath,
+    binaryNames: options.binaryNames ?? inferred.binaryNames,
     homeDir: options.homeDir,
     timeoutSeconds: options.timeoutSeconds,
     shouldInstall:

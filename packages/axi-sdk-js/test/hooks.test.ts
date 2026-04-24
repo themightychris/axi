@@ -1,7 +1,19 @@
-import { describe, expect, it } from "vitest";
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   computeCodexConfigUpdate,
   computeSessionStartHookUpdate,
+  installSessionStartHooks,
+  resolvePortableHookCommand,
   shouldInstallHooksForNodeAxiExecPath,
 } from "../src/hooks.js";
 
@@ -176,6 +188,111 @@ describe("computeCodexConfigUpdate", () => {
   });
 });
 
+describe("resolvePortableHookCommand", () => {
+  const makeContext = (mapping: Record<string, string>) => ({
+    pathEntries: ["/usr/local/bin", "/opt/homebrew/bin"],
+    pathExtensions: [""],
+    resolveRealPath: (p: string) => mapping[p],
+  });
+
+  it("returns the plain binary name when PATH resolves to the same file", () => {
+    const exec = "/opt/homebrew/lib/node_modules/gh-axi/dist/bin/gh-axi.js";
+    const context = makeContext({
+      [exec]: exec,
+      "/opt/homebrew/bin/gh-axi": exec,
+    });
+
+    expect(
+      resolvePortableHookCommand(exec, ["gh-axi"], "gh-axi", context),
+    ).toBe("gh-axi");
+  });
+
+  it("returns the absolute exec path when the binary is not on PATH", () => {
+    const exec = "/opt/homebrew/lib/node_modules/gh-axi/dist/bin/gh-axi.js";
+    const context = makeContext({ [exec]: exec });
+
+    expect(
+      resolvePortableHookCommand(exec, ["gh-axi"], "gh-axi", context),
+    ).toBe(exec);
+  });
+
+  it("returns the absolute exec path when PATH resolves to a different file", () => {
+    const exec = "/Users/me/src/gh-axi/dist/bin/gh-axi.js";
+    const context = makeContext({
+      [exec]: exec,
+      "/usr/local/bin/gh-axi": "/other/install/gh-axi.js",
+    });
+
+    expect(
+      resolvePortableHookCommand(exec, ["gh-axi"], "gh-axi", context),
+    ).toBe(exec);
+  });
+
+  it("skips a binary name that doesn't contain the marker", () => {
+    const exec = "/real/my-binary.js";
+    const context = makeContext({
+      [exec]: exec,
+      "/usr/local/bin/my-binary": exec,
+    });
+
+    expect(
+      resolvePortableHookCommand(exec, ["my-binary"], "custom-marker", context),
+    ).toBe(exec);
+  });
+
+  it("tries multiple binary names and returns the first match", () => {
+    const exec = "/real/gh-axi.js";
+    const context = makeContext({
+      [exec]: exec,
+      "/usr/local/bin/gh-axi": exec,
+    });
+
+    expect(
+      resolvePortableHookCommand(
+        exec,
+        ["nonexistent", "gh-axi"],
+        "gh-axi",
+        context,
+      ),
+    ).toBe("gh-axi");
+  });
+
+  it("tries multiple path extensions", () => {
+    const exec = "/real/gh-axi.js";
+    const context = {
+      pathEntries: ["/usr/local/bin"],
+      pathExtensions: ["", ".EXE", ".CMD"],
+      resolveRealPath: (p: string) =>
+        ({
+          [exec]: exec,
+          "/usr/local/bin/gh-axi.CMD": exec,
+        })[p],
+    };
+
+    expect(
+      resolvePortableHookCommand(exec, ["gh-axi"], "gh-axi", context),
+    ).toBe("gh-axi");
+  });
+
+  it("returns exec path if execPath cannot be resolved", () => {
+    const context = makeContext({});
+    expect(
+      resolvePortableHookCommand(
+        "/missing/gh-axi.js",
+        ["gh-axi"],
+        "gh-axi",
+        context,
+      ),
+    ).toBe("/missing/gh-axi.js");
+  });
+
+  it("returns exec path when no binary names are provided", () => {
+    const exec = "/real/gh-axi.js";
+    const context = makeContext({ [exec]: exec });
+    expect(resolvePortableHookCommand(exec, [], "gh-axi", context)).toBe(exec);
+  });
+});
+
 describe("shouldInstallHooksForNodeAxiExecPath", () => {
   it("rejects development TypeScript entrypoints", () => {
     expect(
@@ -201,5 +318,108 @@ describe("shouldInstallHooksForNodeAxiExecPath", () => {
         },
       ),
     ).toBe(true);
+  });
+});
+
+describe("installSessionStartHooks (portable command)", () => {
+  let tmp: string;
+  let originalPath: string | undefined;
+
+  beforeEach(() => {
+    tmp = mkdtempSync(join(tmpdir(), "axi-sdk-js-hooks-"));
+    originalPath = process.env.PATH;
+  });
+
+  afterEach(() => {
+    if (originalPath === undefined) {
+      delete process.env.PATH;
+    } else {
+      process.env.PATH = originalPath;
+    }
+    rmSync(tmp, { recursive: true, force: true });
+  });
+
+  it("writes the plain binary name when a PATH symlink points at the exec file", () => {
+    const home = join(tmp, "home");
+    const pkgBin = join(tmp, "pkg", "dist", "bin");
+    const pathDir = join(tmp, "path-bin");
+    mkdirSync(home, { recursive: true });
+    mkdirSync(pkgBin, { recursive: true });
+    mkdirSync(pathDir, { recursive: true });
+
+    const execFile = join(pkgBin, "gh-axi.js");
+    writeFileSync(execFile, "// stub\n", "utf-8");
+    symlinkSync(execFile, join(pathDir, "gh-axi"));
+
+    process.env.PATH = pathDir;
+
+    installSessionStartHooks({
+      marker: "gh-axi",
+      execPath: execFile,
+      binaryNames: ["gh-axi"],
+      homeDir: home,
+    });
+
+    const settings = JSON.parse(
+      readFileSync(join(home, ".claude", "settings.json"), "utf-8"),
+    );
+    expect(settings.hooks.SessionStart[0].hooks[0].command).toBe("gh-axi");
+  });
+
+  it("keeps the absolute exec path when the binary is not on PATH", () => {
+    const home = join(tmp, "home");
+    const pkgBin = join(tmp, "pkg", "dist", "bin");
+    const pathDir = join(tmp, "path-bin");
+    mkdirSync(home, { recursive: true });
+    mkdirSync(pkgBin, { recursive: true });
+    mkdirSync(pathDir, { recursive: true });
+
+    const execFile = join(pkgBin, "gh-axi.js");
+    writeFileSync(execFile, "// stub\n", "utf-8");
+
+    process.env.PATH = pathDir;
+
+    installSessionStartHooks({
+      marker: "gh-axi",
+      execPath: execFile,
+      binaryNames: ["gh-axi"],
+      homeDir: home,
+    });
+
+    const settings = JSON.parse(
+      readFileSync(join(home, ".claude", "settings.json"), "utf-8"),
+    );
+    expect(settings.hooks.SessionStart[0].hooks[0].command).toBe(execFile);
+  });
+
+  it("keeps the absolute exec path when PATH resolves to a different binary", () => {
+    const home = join(tmp, "home");
+    const pkgBin = join(tmp, "pkg", "dist", "bin");
+    const otherBin = join(tmp, "other", "dist", "bin");
+    const pathDir = join(tmp, "path-bin");
+    mkdirSync(home, { recursive: true });
+    mkdirSync(pkgBin, { recursive: true });
+    mkdirSync(otherBin, { recursive: true });
+    mkdirSync(pathDir, { recursive: true });
+
+    const execFile = join(pkgBin, "gh-axi.js");
+    const otherFile = join(otherBin, "gh-axi.js");
+    writeFileSync(execFile, "// stub\n", "utf-8");
+    writeFileSync(otherFile, "// other\n", "utf-8");
+    symlinkSync(otherFile, join(pathDir, "gh-axi"));
+
+    process.env.PATH = pathDir;
+
+    installSessionStartHooks({
+      marker: "gh-axi",
+      execPath: execFile,
+      binaryNames: ["gh-axi"],
+      homeDir: home,
+    });
+
+    const settings = JSON.parse(
+      readFileSync(join(home, ".claude", "settings.json"), "utf-8"),
+    );
+    expect(settings.hooks.SessionStart[0].hooks[0].command).toBe(execFile);
   });
 });
