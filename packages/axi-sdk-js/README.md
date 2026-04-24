@@ -65,6 +65,8 @@ Most AXI authors should not need these directly.
 | ---------------------------------------- | -------------------------------------------------------------- |
 | `AxiError`                               | Throw structured AXI errors from command handlers              |
 | `installSessionStartHooks()`             | Install or repair Claude Code and Codex session hooks directly |
+| `resolvePortableHookCommand()`           | Resolve a hook command to a safe binary name or absolute path  |
+| `PortableHookCommandContext`             | Context for resolving portable hook commands                   |
 | `shouldInstallHooksForNodeAxiExecPath()` | Check whether an executable path should self-install hooks     |
 
 ### Hook Command Portability
