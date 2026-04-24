@@ -153,7 +153,7 @@ help[2]:
 
 - **Default app targets**: by default, support Claude Code and Codex. Do not hard-code a single agent integration when the tool can reasonably support both
 - **Self-installing**: register hooks at global/user level on first run — no manual setup required
-- **Absolute paths**: hook commands must use the full absolute path of the current executable (via `os.Executable()` or equivalent), not a bare command name. This ensures hooks work regardless of the agent's `$PATH` at runtime
+- **Portable commands**: hook commands should use a PATH-verified binary name when it resolves to the current executable, and fall back to the full absolute path otherwise. This keeps global installs portable while ensuring hooks do not accidentally run a different binary
 - **Path repair**: on every invocation, check existing hooks and update the executable path if it has changed (e.g., after reinstall or relocation). This turns self-install into self-heal
 - **Idempotent**: repeated installs with the same path are silent no-ops
 - **Directory-scoped**: show only state relevant to the current working directory

@@ -67,6 +67,12 @@ Most AXI authors should not need these directly.
 | `installSessionStartHooks()`             | Install or repair Claude Code and Codex session hooks directly |
 | `shouldInstallHooksForNodeAxiExecPath()` | Check whether an executable path should self-install hooks     |
 
+### Hook Command Portability
+
+`runAxiCli()` installs hooks automatically when it can infer the binary from the executable path. Hook commands use a plain binary name such as `gh-axi` only when `binaryNames` resolves through the current `PATH` to the same executable; otherwise they use the absolute `execPath`.
+
+For custom wrappers, pass `hooks: { binaryNames: ["my-axi"] }` to `runAxiCli()`. Direct callers can pass the same `binaryNames` option to `installSessionStartHooks()`.
+
 ## Development
 
 ```sh
