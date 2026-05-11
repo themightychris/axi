@@ -139,7 +139,7 @@ export function computeCodexConfigUpdate(content: string): [string, boolean] {
   const normalized = content.length === 0 ? "" : content;
 
   if (normalized.trim().length === 0) {
-    return [`[features]${newline}codex_hooks = true${newline}`, true];
+    return [`[features]${newline}hooks = true${newline}`, true];
   }
 
   const lines = normalized.split(/\r?\n/);
@@ -161,7 +161,7 @@ export function computeCodexConfigUpdate(content: string): [string, boolean] {
 
       const sectionName = section[2].trim();
       if (inFeatures) {
-        updated.splice(index, 0, "codex_hooks = true");
+        updated.splice(index, 0, "hooks = true");
         return [updated.join(newline), true];
       }
 
@@ -174,7 +174,7 @@ export function computeCodexConfigUpdate(content: string): [string, boolean] {
       continue;
     }
 
-    const flag = line.match(/^\s*codex_hooks\s*=\s*(true|false)\s*(?:#.*)?$/);
+    const flag = line.match(/^\s*hooks\s*=\s*(true|false)\s*(?:#.*)?$/);
     if (!flag) {
       continue;
     }
@@ -189,14 +189,14 @@ export function computeCodexConfigUpdate(content: string): [string, boolean] {
 
   if (sawFeatures) {
     const suffix = normalized.endsWith(newline) ? "" : newline;
-    return [`${normalized}${suffix}codex_hooks = true${newline}`, true];
+    return [`${normalized}${suffix}hooks = true${newline}`, true];
   }
 
   const separator = normalized.endsWith(newline)
     ? newline
     : `${newline}${newline}`;
   return [
-    `${normalized}${separator}[features]${newline}codex_hooks = true${newline}`,
+    `${normalized}${separator}[features]${newline}hooks = true${newline}`,
     true,
   ];
 }

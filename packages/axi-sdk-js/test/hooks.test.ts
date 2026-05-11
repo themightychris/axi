@@ -159,32 +159,41 @@ describe("computeSessionStartHookUpdate", () => {
 describe("computeCodexConfigUpdate", () => {
   it("creates a features section for empty config", () => {
     expect(computeCodexConfigUpdate("")).toEqual([
-      "[features]\ncodex_hooks = true\n",
+      "[features]\nhooks = true\n",
       true,
     ]);
   });
 
-  it("adds codex_hooks inside an existing features section", () => {
+  it("adds hooks inside an existing features section", () => {
     const [updated, changed] = computeCodexConfigUpdate(
       "[features]\nother = true\n",
     );
 
     expect(changed).toBe(true);
-    expect(updated).toBe("[features]\nother = true\ncodex_hooks = true\n");
+    expect(updated).toBe("[features]\nother = true\nhooks = true\n");
   });
 
-  it("repairs codex_hooks when it is disabled", () => {
+  it("repairs hooks when it is disabled", () => {
     const [updated, changed] = computeCodexConfigUpdate(
-      "[features]\ncodex_hooks = false\n",
+      "[features]\nhooks = false\n",
     );
 
     expect(changed).toBe(true);
-    expect(updated).toBe("[features]\ncodex_hooks = true\n");
+    expect(updated).toBe("[features]\nhooks = true\n");
   });
 
-  it("is a no-op when codex_hooks is already enabled", () => {
-    const original = "[features]\ncodex_hooks = true\n";
+  it("is a no-op when hooks is already enabled", () => {
+    const original = "[features]\nhooks = true\n";
     expect(computeCodexConfigUpdate(original)).toEqual([original, false]);
+  });
+
+  it("does not treat legacy codex_hooks as sufficient", () => {
+    const [updated, changed] = computeCodexConfigUpdate(
+      "[features]\ncodex_hooks = true\n",
+    );
+
+    expect(changed).toBe(true);
+    expect(updated).toBe("[features]\ncodex_hooks = true\nhooks = true\n");
   });
 });
 

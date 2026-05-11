@@ -163,7 +163,7 @@ help[2]:
 **How to integrate with each app:**
 
 - **Claude Code**: use native hooks in `~/.claude/settings.json` or project `.claude/settings.json`. Prefer `SessionStart` to inject compact context via stdout
-- **Codex**: use native hooks in `~/.codex/hooks.json` or `<repo>/.codex/hooks.json`, and ensure `[features].codex_hooks = true` in `config.toml`. Prefer `SessionStart` for ambient context via stdout
+- **Codex**: use native hooks in `~/.codex/hooks.json` or `<repo>/.codex/hooks.json`, and ensure `[features].hooks = true` in `config.toml`. Prefer `SessionStart` for ambient context via stdout
 
 ## 8. Content first
 
