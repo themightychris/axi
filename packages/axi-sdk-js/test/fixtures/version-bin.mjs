@@ -1,4 +1,4 @@
-import { runAxiCli } from "../../dist/cli.js";
+import { runAxiCli } from "../../src/cli.ts";
 
 await runAxiCli({
   description: "Fixture CLI",

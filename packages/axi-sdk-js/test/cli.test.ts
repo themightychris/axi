@@ -365,9 +365,12 @@ describe("runAxiCli subprocess integration", () => {
       const fixturePath = fileURLToPath(
         new URL("./fixtures/version-bin.mjs", import.meta.url),
       );
+      const viteNodePath = fileURLToPath(
+        new URL("../node_modules/.bin/vite-node", import.meta.url),
+      );
       const { stdout, stderr } = await execFileAsync(
         process.execPath,
-        [fixturePath, flag],
+        [viteNodePath, fixturePath, flag],
         {
           cwd: new URL("..", import.meta.url),
         },

@@ -1,14 +1,17 @@
 import {
+  chmodSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  realpathSync,
   rmSync,
   symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   computeCodexConfigUpdate,
@@ -471,6 +474,42 @@ describe("installSessionStartHooks (OpenCode plugin)", () => {
     expect(plugin).toContain("spawn(command, [],");
     expect(plugin).toContain("cwd: directory");
     expect(plugin).not.toContain("tool:");
+  });
+
+  it("runs the generated OpenCode plugin and appends ambient context", async () => {
+    const home = join(tmp, "home");
+    const workspace = join(tmp, "workspace");
+    const execFile = join(tmp, "pkg", "dist", "bin", "gh-axi.js");
+    mkdirSync(join(tmp, "pkg", "dist", "bin"), { recursive: true });
+    mkdirSync(workspace, { recursive: true });
+    writeFileSync(
+      execFile,
+      '#!/usr/bin/env node\nconsole.log("home cwd:" + process.cwd())\n',
+      "utf-8",
+    );
+    chmodSync(execFile, 0o755);
+
+    installSessionStartHooks({
+      marker: "gh-axi",
+      execPath: execFile,
+      binaryNames: ["gh-axi"],
+      homeDir: home,
+    });
+
+    const pluginModule = await import(pathToFileURL(pluginPath(home)).href);
+    const plugin = await pluginModule.AxiGhAxiAmbientContextPlugin({
+      directory: workspace,
+    });
+    const output = { system: [] as string[] };
+
+    await plugin["experimental.chat.system.transform"](
+      { sessionID: "session-1" },
+      output,
+    );
+
+    expect(output.system).toEqual([
+      `## AXI ambient context: gh-axi\nhome cwd:${realpathSync(workspace)}`,
+    ]);
   });
 
   it("repairs the managed OpenCode plugin when the executable path changes", () => {
