@@ -545,7 +545,11 @@ describe("installSessionStartHooks (OpenCode plugin)", () => {
     mkdirSync(join(home, ".config", "opencode", "plugins"), {
       recursive: true,
     });
-    writeFileSync(target, "export const UserPlugin = async () => ({})\n", "utf-8");
+    writeFileSync(
+      target,
+      "export const UserPlugin = async () => ({})\n",
+      "utf-8",
+    );
     const errors: string[] = [];
 
     installSessionStartHooks({
@@ -559,7 +563,9 @@ describe("installSessionStartHooks (OpenCode plugin)", () => {
     expect(readFileSync(target, "utf-8")).toBe(
       "export const UserPlugin = async () => ({})\n",
     );
-    expect(errors[0]).toContain("refusing to overwrite unmanaged OpenCode plugin");
+    expect(errors[0]).toContain(
+      "refusing to overwrite unmanaged OpenCode plugin",
+    );
   });
 
   it("skips the OpenCode plugin when hook installation policy rejects the executable", () => {

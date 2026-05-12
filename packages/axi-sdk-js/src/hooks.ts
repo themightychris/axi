@@ -323,7 +323,11 @@ function installOpenCodeAmbientPlugin(
     `axi-${sanitizeOpenCodePluginFilePart(marker)}.js`,
   );
   const managedMarker = `${OPENCODE_PLUGIN_MANAGED_PREFIX} ${marker}`;
-  const next = buildOpenCodeAmbientPluginSource(marker, command, timeoutSeconds);
+  const next = buildOpenCodeAmbientPluginSource(
+    marker,
+    command,
+    timeoutSeconds,
+  );
 
   try {
     mkdirSync(dirname(pluginPath), { recursive: true });

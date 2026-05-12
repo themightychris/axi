@@ -61,13 +61,13 @@ await runAxiCli({
 
 Most AXI authors should not need these directly.
 
-| API                                      | Description                                                    |
-| ---------------------------------------- | -------------------------------------------------------------- |
-| `AxiError`                               | Throw structured AXI errors from command handlers              |
+| API                                      | Description                                                                                     |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `AxiError`                               | Throw structured AXI errors from command handlers                                               |
 | `installSessionStartHooks()`             | Install or repair Claude Code hooks, Codex hooks, and OpenCode ambient context plugins directly |
-| `resolvePortableHookCommand()`           | Resolve a hook command to a safe binary name or absolute path  |
-| `PortableHookCommandContext`             | Context for resolving portable hook commands                   |
-| `shouldInstallHooksForNodeAxiExecPath()` | Check whether an executable path should self-install hooks     |
+| `resolvePortableHookCommand()`           | Resolve a hook command to a safe binary name or absolute path                                   |
+| `PortableHookCommandContext`             | Context for resolving portable hook commands                                                    |
+| `shouldInstallHooksForNodeAxiExecPath()` | Check whether an executable path should self-install hooks                                      |
 
 ### Hook Command Portability
 
