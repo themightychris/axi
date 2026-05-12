@@ -128,14 +128,14 @@ Every operation must be completable with flags alone. If a required value is mis
 
 Never mix progress messages into stdout. An agent that reads "Fetching data..." will try to interpret it as data.
 
-## 7. Ambient context via session hooks
+## 7. Ambient context via session integrations
 
 Register your tool into the agent's session lifecycle so every conversation starts with relevant state already visible — before the agent takes any action.
 
 **Pattern:**
 
-1. On first invocation, self-install hooks into the agent's configuration (idempotently)
-2. At session start, a hook runs your tool and outputs a compact dashboard to stdout
+1. On first invocation, self-install a session hook or plugin into the agent's configuration (idempotently)
+2. At session start, the integration runs your tool and provides a compact dashboard as context
 3. The agent receives this as initial context and can act immediately
 
 ```
@@ -151,8 +151,8 @@ help[2]:
 
 **Rules:**
 
-- **Default app targets**: by default, support Claude Code and Codex. Do not hard-code a single agent integration when the tool can reasonably support both
-- **Self-installing**: register hooks at global/user level on first run — no manual setup required
+- **Default app targets**: by default, support Claude Code, Codex, and OpenCode. Do not hard-code a single agent integration when the tool can reasonably support multiple agents
+- **Self-installing**: register hooks or plugins at global/user level on first run — no manual setup required
 - **Portable commands**: hook commands should use a PATH-verified binary name when it resolves to the current executable, and fall back to the full absolute path otherwise. This keeps global installs portable while ensuring hooks do not accidentally run a different binary
 - **Path repair**: on every invocation, check existing hooks and update the executable path if it has changed (e.g., after reinstall or relocation). This turns self-install into self-heal
 - **Idempotent**: repeated installs with the same path are silent no-ops
@@ -164,6 +164,7 @@ help[2]:
 
 - **Claude Code**: use native hooks in `~/.claude/settings.json` or project `.claude/settings.json`. Prefer `SessionStart` to inject compact context via stdout
 - **Codex**: use native hooks in `~/.codex/hooks.json` or `<repo>/.codex/hooks.json`, and ensure `[features].hooks = true` in `config.toml`. Prefer `SessionStart` for ambient context via stdout
+- **OpenCode**: use a managed plugin in `~/.config/opencode/plugins/`. Prefer ambient system-context injection for the home view rather than adding a custom tool
 
 ## 8. Content first
 

@@ -74,7 +74,7 @@ These principles define what makes a CLI tool "an AXI":
 | 4   | **Pre-computed aggregates**        | Include aggregated counts and statuses that eliminate round trips           |
 | 5   | **Definitive empty states**        | Explicit "0 results" rather than ambiguous empty output                     |
 | 6   | **Structured errors & exit codes** | Idempotent mutations, structured errors, no interactive prompts             |
-| 7   | **Ambient context**                | Self-install into session hooks so agents see state before invoking         |
+| 7   | **Ambient context**                | Self-install session integrations so agents see state before invoking       |
 | 8   | **Content first**                  | Running with no arguments shows live data, not help text                    |
 | 9   | **Contextual disclosure**          | Include next-step suggestions after each output                             |
 | 10  | **Consistent way to get help**     | Concise per-subcommand reference when agents need it                        |

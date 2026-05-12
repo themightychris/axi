@@ -449,8 +449,8 @@
               Idempotent mutations, structured errors, no interactive prompts
             </li>
             <li>
-              <strong>Ambient context</strong> &mdash; Self-install into session
-              hooks so agents see state before invoking
+              <strong>Ambient context</strong> &mdash; Self-install session
+              integrations so agents see state before invoking
             </li>
             <li>
               <strong>Content first</strong> &mdash; Prefer showing actual data,
@@ -575,11 +575,10 @@ pull_request:
 
         <h4><span class="text-accent">7.</span> Ambient context</h4>
         <p>
-          Self-install into the agent&rsquo;s session hooks so that every
-          conversation starts with relevant state already visible &mdash; before
-          the agent takes any action. The hook outputs a compact,
-          directory-scoped dashboard to stdout, which the agent receives as
-          initial context.
+          Self-install into the agent&rsquo;s session hooks or plugin system so that
+          every conversation starts with relevant state already visible &mdash;
+          before the agent takes any action. The integration provides a compact,
+          directory-scoped dashboard as initial context.
         </p>
 
         <h4><span class="text-accent">8.</span> Content first</h4>
