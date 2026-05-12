@@ -13,7 +13,7 @@
 
 Every Node-based AXI ends up redoing the same work: top-level dispatch, structured errors, TOON output, and hook installation for a few agents.
 
-`axi-sdk-js` pulls those shared runtime pieces into one package. Your AXI can stay focused on business logic, work with plain JavaScript objects, and let the runtime handle official TOON serialization and session hook plumbing.
+`axi-sdk-js` pulls those shared runtime pieces into one package. Your AXI can stay focused on business logic, work with plain JavaScript objects, and let the runtime handle official TOON serialization and agent session context plumbing.
 
 `runAxiCli()` assumes a command-first CLI shape: `<bin> <command> ...args ...flags`. Bare `--help` is still supported, but flags are not allowed before the top-level command.
 
@@ -64,14 +64,16 @@ Most AXI authors should not need these directly.
 | API                                      | Description                                                    |
 | ---------------------------------------- | -------------------------------------------------------------- |
 | `AxiError`                               | Throw structured AXI errors from command handlers              |
-| `installSessionStartHooks()`             | Install or repair Claude Code and Codex session hooks directly |
+| `installSessionStartHooks()`             | Install or repair Claude Code hooks, Codex hooks, and OpenCode ambient context plugins directly |
 | `resolvePortableHookCommand()`           | Resolve a hook command to a safe binary name or absolute path  |
 | `PortableHookCommandContext`             | Context for resolving portable hook commands                   |
 | `shouldInstallHooksForNodeAxiExecPath()` | Check whether an executable path should self-install hooks     |
 
 ### Hook Command Portability
 
-`runAxiCli()` installs hooks automatically when it can infer the binary from the executable path. Hook commands use a plain binary name such as `gh-axi` only when that name contains the hook marker and `binaryNames` resolves through the current `PATH` to the same executable; otherwise they use the absolute `execPath`.
+`runAxiCli()` installs hooks automatically when it can infer the binary from the executable path.
+Claude Code and Codex receive native `SessionStart` hooks, while OpenCode receives a managed plugin in `~/.config/opencode/plugins/` that injects the AXI home view as ambient model context.
+Hook commands use a plain binary name such as `gh-axi` only when that name contains the hook marker and `binaryNames` resolves through the current `PATH` to the same executable; otherwise they use the absolute `execPath`.
 
 For custom wrappers, pass `hooks: { binaryNames: ["my-axi"] }` to `runAxiCli()`. Direct callers can pass the same `binaryNames` option to `installSessionStartHooks()`.
 
