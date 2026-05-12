@@ -1,0 +1,14 @@
+packages:
+  - "."
+  - "packages/*"
+  - "bench-browser"
+  - "bench-github"
+
+minimumReleaseAge: 10080
+minimumReleaseAgeStrict: true
+minimumReleaseAgeExclude:
+  - axi-sdk-js
+onlyBuiltDependencies:
+  - esbuild
+allowBuilds:
+  esbuild: true

@@ -1,6 +1,7 @@
 {
   "name": "axi-repo-tools",
   "private": true,
+  "packageManager": "pnpm@11.1.1",
   "type": "module",
   "scripts": {
     "lint": "eslint packages/axi-sdk-js/src packages/axi-sdk-js/test eslint.config.mjs",

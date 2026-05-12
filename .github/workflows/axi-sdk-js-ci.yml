@@ -18,17 +18,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            packages/axi-sdk-js/package-lock.json
+          cache: pnpm
 
-      - run: npm ci
-      - run: npm --prefix packages/axi-sdk-js ci
-      - run: npm run format:check
-      - run: npm run lint
-      - run: npm --prefix packages/axi-sdk-js run build
-      - run: npm --prefix packages/axi-sdk-js test
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run format:check
+      - run: pnpm run lint
+      - run: pnpm --dir packages/axi-sdk-js run build
+      - run: pnpm --dir packages/axi-sdk-js test
