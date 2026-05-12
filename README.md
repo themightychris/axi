@@ -96,23 +96,22 @@ This installs the [AXI skill](.agents/skills/axi/SKILL.md) — a detailed guide 
 The browser benchmark harness lives in `bench-browser/`. It compares browser automation tools across 16 browsing tasks.
 
 ```sh
-cd bench-browser
-npm install
+pnpm install
 
 # Run a single condition × task
-npm run bench -- run --condition chrome-devtools-axi --task read_static_page
+pnpm --dir bench-browser run bench -- run --condition chrome-devtools-axi --task read_static_page
 
 # Run the full matrix
-npm run bench -- matrix --repeat 5
+pnpm --dir bench-browser run bench -- matrix --repeat 5
 
 # Generate summary report
-npm run bench -- report
+pnpm --dir bench-browser run bench -- report
 
 # Render the social video
-npm run render:social
+pnpm --dir bench-browser run render:social
 ```
 
-The HyperFrames composition for the social asset lives in `bench-browser/social/`. Edit `social/index.html` for the animation and render `docs/social/rendered/race.mp4` with `npm run render:social`.
+The HyperFrames composition for the social asset lives in `bench-browser/social/`. Edit `social/index.html` for the animation and render `docs/social/rendered/race.mp4` with `pnpm --dir bench-browser run render:social`.
 
 Published results (490 runs): [`bench-browser/published-results/report.md`](bench-browser/published-results/report.md)
 
@@ -121,17 +120,16 @@ Published results (490 runs): [`bench-browser/published-results/report.md`](benc
 The GitHub benchmark harness lives in `bench-github/`. It runs agent tasks across different interface conditions and grades results with an LLM judge.
 
 ```sh
-cd bench-github
-npm install
+pnpm install
 
 # Run a single condition × task
-npm run bench -- run --condition axi --task merged_pr_ci_audit --repeat 5 --agent claude
+pnpm --dir bench-github run bench -- run --condition axi --task merged_pr_ci_audit --repeat 5 --agent claude
 
 # Run the full matrix
-npm run bench -- matrix --repeat 5 --agent claude
+pnpm --dir bench-github run bench -- matrix --repeat 5 --agent claude
 
 # Generate summary report
-npm run bench -- report
+pnpm --dir bench-github run bench -- report
 ```
 
 Published results (425 runs): [`bench-github/published-results/STUDY.md`](bench-github/published-results/STUDY.md)

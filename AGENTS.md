@@ -18,30 +18,27 @@ The reference AXI implementation (`gh-axi`) lives in a separate repo: [kunchengu
 ### Benchmark harness (GitHub)
 
 ```sh
-cd bench-github
-npm install
-npm run bench -- run --condition axi --task merged_pr_ci_audit --repeat 5 --agent claude
-npm run bench -- matrix --repeat 5 --agent claude
-npm run bench -- report
-npm test           # Run bench tests (vitest)
+pnpm install
+pnpm --dir bench-github run bench -- run --condition axi --task merged_pr_ci_audit --repeat 5 --agent claude
+pnpm --dir bench-github run bench -- matrix --repeat 5 --agent claude
+pnpm --dir bench-github run bench -- report
+pnpm --dir bench-github test           # Run bench tests (vitest)
 ```
 
 ### Benchmark harness (Browser)
 
 ```sh
-cd bench-browser
-npm install
-npm run bench -- run --condition agent-browser --task read_static_page --repeat 5
-npm run bench -- matrix --repeat 5    # full run: all conditions × all tasks × 5 repeats
-npm run bench -- report
-npm test           # Run bench tests (vitest)
+pnpm install
+pnpm --dir bench-browser run bench -- run --condition agent-browser --task read_static_page --repeat 5
+pnpm --dir bench-browser run bench -- matrix --repeat 5    # full run: all conditions × all tasks × 5 repeats
+pnpm --dir bench-browser run bench -- report
+pnpm --dir bench-browser test           # Run bench tests (vitest)
 ```
 
 ### Social video rendering
 
 ```sh
-cd bench-browser
-npm run render:social   # Render social/index.html via HyperFrames to docs/social/rendered/race.mp4
+pnpm --dir bench-browser run render:social   # Render social/index.html via HyperFrames to docs/social/rendered/race.mp4
 ```
 
 The source composition is `bench-browser/social/` (a HyperFrames project). Edit `social/index.html` for content/animation; see `social/DESIGN.md` for the visual identity. Use the `/hyperframes` skill when modifying the composition.

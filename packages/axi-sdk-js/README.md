@@ -80,7 +80,7 @@ For custom wrappers, pass `hooks: { binaryNames: ["my-axi"] }` to `runAxiCli()`.
 ## Development
 
 ```sh
-cd packages/axi-sdk-js && npm ci # Install dependencies
-npm test # Run tests
-npm run build # Build dist output
+pnpm install # Install workspace dependencies
+pnpm --dir packages/axi-sdk-js test # Run tests
+pnpm --dir packages/axi-sdk-js run build # Build dist output
 ```
