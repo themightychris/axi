@@ -77,9 +77,21 @@ Most AXI authors should not need these directly.
 Hook installation should be exposed through an explicit user-invoked setup command, for example `my-axi setup hooks`.
 
 ```ts
-import { installSessionStartHooks } from "axi-sdk-js";
+import { installSessionStartHooks, runAxiCli } from "axi-sdk-js";
 
-await installSessionStartHooks();
+await runAxiCli({
+  // ...other options
+  commands: {
+    setup: async (args) => {
+      if (args[0] !== "hooks") {
+        return { error: "Unknown setup command", help: "Run `my-axi setup hooks`" };
+      }
+
+      installSessionStartHooks();
+      return { setup: "hooks installed or already up to date" };
+    },
+  },
+});
 ```
 
 Calling `installSessionStartHooks()` without identity options infers the current CLI from `process.argv[1]`.
