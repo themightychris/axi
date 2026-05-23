@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/kunchenguid/axi/compare/axi-sdk-js-v0.1.6...axi-sdk-js-v0.1.7) (2026-05-23)
+
+
+### Bug Fixes
+
+* **axi-sdk-js:** make session hook setup explicit ([#42](https://github.com/kunchenguid/axi/issues/42)) ([66a68a2](https://github.com/kunchenguid/axi/commit/66a68a2e42f2506879fb5e53eca9c5d41314c83f))
+
 ## [0.1.6](https://github.com/kunchenguid/axi/compare/axi-sdk-js-v0.1.5...axi-sdk-js-v0.1.6) (2026-05-12)
 
 
