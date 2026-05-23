@@ -337,10 +337,12 @@ describe("shouldInstallHooksForNodeAxiExecPath", () => {
 describe("installSessionStartHooks (portable command)", () => {
   let tmp: string;
   let originalPath: string | undefined;
+  let originalArgv: string[];
 
   beforeEach(() => {
     tmp = mkdtempSync(join(tmpdir(), "axi-sdk-js-hooks-"));
     originalPath = process.env.PATH;
+    originalArgv = [...process.argv];
   });
 
   afterEach(() => {
@@ -349,7 +351,39 @@ describe("installSessionStartHooks (portable command)", () => {
     } else {
       process.env.PATH = originalPath;
     }
+    process.argv = originalArgv;
     rmSync(tmp, { recursive: true, force: true });
+  });
+
+  it("infers current CLI hook options when no identity options are provided", () => {
+    const home = join(tmp, "home");
+    const pkgBin = join(tmp, "pkg", "dist", "bin");
+    mkdirSync(home, { recursive: true });
+    mkdirSync(pkgBin, { recursive: true });
+
+    const execFile = join(pkgBin, "gh-axi.js");
+    writeFileSync(execFile, "// stub\n", "utf-8");
+    process.argv = ["node", execFile];
+
+    installSessionStartHooks({ homeDir: home });
+
+    const settings = JSON.parse(
+      readFileSync(join(home, ".claude", "settings.json"), "utf-8"),
+    );
+    expect(settings.hooks.SessionStart[0].hooks[0].command).toBe(execFile);
+    expect(settings.hooks.SessionStart[0].hooks[0].timeout).toBe(10);
+  });
+
+  it("skips inferred current CLI hooks for development TypeScript entrypoints", () => {
+    const home = join(tmp, "home");
+    const execFile = join(tmp, "gh-axi", "bin", "gh-axi.ts");
+    mkdirSync(join(tmp, "gh-axi", "bin"), { recursive: true });
+    writeFileSync(execFile, "// stub\n", "utf-8");
+    process.argv = ["node", execFile];
+
+    installSessionStartHooks({ homeDir: home });
+
+    expect(existsSync(join(home, ".claude", "settings.json"))).toBe(false);
   });
 
   it("writes the plain binary name when a PATH symlink points at the exec file", () => {

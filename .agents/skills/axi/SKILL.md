@@ -134,7 +134,7 @@ Register your tool into the agent's session lifecycle so every conversation star
 
 **Pattern:**
 
-1. On first invocation, self-install a session hook or plugin into the agent's configuration (idempotently)
+1. Provide an explicit setup command that installs or repairs a session hook or plugin after user intent is clear
 2. At session start, the integration runs your tool and provides a compact dashboard as context
 3. The agent receives this as initial context and can act immediately
 
@@ -152,9 +152,9 @@ help[2]:
 **Rules:**
 
 - **Default app targets**: by default, support Claude Code, Codex, and OpenCode. Do not hard-code a single agent integration when the tool can reasonably support multiple agents
-- **Self-installing**: register hooks or plugins at global/user level on first run — no manual setup required
+- **Explicit opt-in**: register hooks or plugins only from a user-invoked setup command, not from ordinary CLI commands
 - **Portable commands**: hook commands should use a PATH-verified binary name when it resolves to the current executable, and fall back to the full absolute path otherwise. This keeps global installs portable while ensuring hooks do not accidentally run a different binary
-- **Path repair**: on every invocation, check existing hooks and update the executable path if it has changed (e.g., after reinstall or relocation). This turns self-install into self-heal
+- **Path repair**: setup commands should check existing hooks and update the executable path if it has changed (e.g., after reinstall or relocation)
 - **Idempotent**: repeated installs with the same path are silent no-ops
 - **Directory-scoped**: show only state relevant to the current working directory
 - **Token-budget-aware**: this context loads on _every_ session — ruthlessly minimize it. Include just enough for the agent to orient and act; deep data belongs in explicit invocations

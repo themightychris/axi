@@ -276,42 +276,12 @@ describe("runAxiCli", () => {
     expect(home).toHaveBeenCalledWith([], { repo: "owner/name" });
   });
 
-  it("installs hooks automatically from the executable path", async () => {
+  it("does not install hooks automatically from the executable path", async () => {
     process.argv = ["node", "/Users/me/src/gh-axi/dist/bin/gh-axi.js"];
 
     await runAxiCli({
       description: "Manage GitHub state",
       topLevelHelp: "top help",
-      home,
-      commands: { issue },
-      stdout,
-    });
-
-    expect(installSessionStartHooks).toHaveBeenCalledTimes(1);
-    expect(installSessionStartHooks).toHaveBeenCalledWith(
-      expect.objectContaining({
-        marker: "gh-axi",
-        execPath: "/Users/me/src/gh-axi/dist/bin/gh-axi.js",
-        binaryNames: ["gh-axi"],
-      }),
-    );
-
-    const options = installSessionStartHooks.mock.calls[0]?.[0];
-    expect(
-      options.shouldInstall("/Users/me/src/gh-axi/dist/bin/gh-axi.js"),
-    ).toBe(true);
-    expect(options.shouldInstall("/Users/me/src/gh-axi/bin/gh-axi.ts")).toBe(
-      false,
-    );
-  });
-
-  it("allows automatic hook installation to be disabled", async () => {
-    process.argv = ["node", "/Users/me/src/gh-axi/dist/bin/gh-axi.js"];
-
-    await runAxiCli({
-      description: "Manage GitHub state",
-      topLevelHelp: "top help",
-      hooks: false,
       home,
       commands: { issue },
       stdout,

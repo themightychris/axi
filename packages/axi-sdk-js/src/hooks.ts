@@ -42,9 +42,10 @@ export interface NodeAxiExecPathPolicy {
 }
 
 export interface InstallSessionStartHooksOptions {
-  marker: string;
+  marker?: string;
   execPath?: string;
   binaryNames?: string[];
+  distEntrypoints?: string[];
   timeoutSeconds?: number;
   homeDir?: string;
   shouldInstall?: (execPath: string) => boolean;
@@ -430,22 +431,92 @@ export function shouldInstallHooksForNodeAxiExecPath(
   );
 }
 
-export function installSessionStartHooks(
+interface InferredHookOptions {
+  execPath: string;
+  marker: string;
+  binaryNames: string[];
+  distEntrypoints: string[];
+}
+
+function inferHookOptions(
+  execPath: string | undefined,
+): InferredHookOptions | undefined {
+  if (!execPath) {
+    return undefined;
+  }
+
+  const normalized = execPath.replaceAll("\\", "/");
+  const match = normalized.match(/(?:^|\/)dist\/bin\/([^/]+)\.js$/);
+  if (match?.[1]) {
+    const marker = match[1];
+    return {
+      execPath,
+      marker,
+      binaryNames: [marker],
+      distEntrypoints: [`dist/bin/${marker}.js`],
+    };
+  }
+
+  const fileName = normalized.split("/").pop() ?? "";
+  if (!fileName || fileName.includes(".") || fileName === "node") {
+    return undefined;
+  }
+
+  return {
+    execPath,
+    marker: fileName,
+    binaryNames: [fileName],
+    distEntrypoints: [`dist/bin/${fileName}.js`],
+  };
+}
+
+function buildInferredHookInstallPolicy(
+  marker: string,
   options: InstallSessionStartHooksOptions,
+  inferred: InferredHookOptions,
+): (execPath: string) => boolean {
+  const binaryNames = options.binaryNames ?? inferred.binaryNames;
+  const distEntrypoints = options.distEntrypoints ?? inferred.distEntrypoints;
+
+  return (execPath: string) =>
+    shouldInstallHooksForNodeAxiExecPath(execPath, {
+      marker,
+      binaryNames,
+      distEntrypoints,
+    });
+}
+
+export function installSessionStartHooks(
+  options: InstallSessionStartHooksOptions = {},
 ): void {
-  const execPath = resolve(options.execPath ?? process.argv[1] ?? "");
+  const inferred = inferHookOptions(options.execPath ?? process.argv[1]);
+  const marker = options.marker ?? inferred?.marker;
+  if (!marker) {
+    return;
+  }
+
+  const execPath = resolve(
+    options.execPath ?? inferred?.execPath ?? process.argv[1] ?? "",
+  );
   if (!execPath) {
     return;
   }
 
-  if (options.shouldInstall && !options.shouldInstall(execPath)) {
+  const shouldInstall =
+    options.shouldInstall ??
+    (inferred
+      ? buildInferredHookInstallPolicy(marker, options, inferred)
+      : undefined);
+  if (shouldInstall && !shouldInstall(execPath)) {
     return;
   }
 
+  const binaryNames = options.binaryNames ?? inferred?.binaryNames ?? [];
+
   const command = resolvePortableHookCommand(
     execPath,
-    options.binaryNames ?? [],
-    options.marker,
+    binaryNames,
+    marker,
     buildDefaultPortableCommandContext(),
   );
 
@@ -458,7 +529,7 @@ export function installSessionStartHooks(
 
   installOpenCodeAmbientPlugin(
     home,
-    options.marker,
+    marker,
     command,
     options.timeoutSeconds ?? 10,
     options.onError,
@@ -471,7 +542,7 @@ export function installSessionStartHooks(
         ? (JSON.parse(readFileSync(target, "utf-8")) as HookSettings)
         : {};
       const [updated, changed] = computeSessionStartHookUpdate(current, {
-        marker: options.marker,
+        marker,
         command,
         timeoutSeconds: options.timeoutSeconds,
       });

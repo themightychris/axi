@@ -1,10 +1,6 @@
 import { basename } from "node:path";
 import { AxiError, exitCodeForError } from "./errors.js";
 import {
-  installSessionStartHooks,
-  shouldInstallHooksForNodeAxiExecPath,
-} from "./hooks.js";
-import {
   homeHeaderOutput,
   renderError,
   renderOutput,
@@ -19,17 +15,6 @@ export type AxiCliCommand<TContext> = (
   context: TContext | undefined,
 ) => MaybePromise<AxiRenderable>;
 
-export interface AxiCliHookOptions {
-  marker?: string;
-  execPath?: string;
-  homeDir?: string;
-  timeoutSeconds?: number;
-  binaryNames?: string[];
-  distEntrypoints?: string[];
-  shouldInstall?: (execPath: string) => boolean;
-  onError?: (message: string) => void;
-}
-
 export interface AxiResolveContextInput {
   command: string | undefined;
   args: string[];
@@ -42,7 +27,6 @@ export interface AxiCliOptions<TContext = undefined> {
   topLevelHelp: string;
   commands: Record<string, AxiCliCommand<TContext>>;
   home: AxiCliCommand<TContext>;
-  hooks?: false | AxiCliHookOptions;
   getCommandHelp?: (command: string) => string | null | undefined;
   initialize?: () => void;
   resolveContext?: (input: AxiResolveContextInput) => MaybePromise<TContext>;
@@ -78,7 +62,6 @@ function defaultUnknownCommand(command: string): string {
 export async function runAxiCli<TContext = undefined>(
   options: AxiCliOptions<TContext>,
 ): Promise<void> {
-  installHooks(options.hooks);
   options.initialize?.();
 
   const stdout = options.stdout ?? process.stdout;
@@ -173,90 +156,6 @@ function renderLeadingFlagError(flag: string): string {
 
 function isVersionFlag(flag: string): boolean {
   return flag === "-v" || flag === "-V" || flag === "--version";
-}
-
-function installHooks(options: false | AxiCliHookOptions | undefined): void {
-  if (options === false) {
-    return;
-  }
-
-  if (!options) {
-    options = {};
-  }
-
-  const inferred = inferHookOptions(options.execPath ?? process.argv[1]);
-  if (!inferred) {
-    return;
-  }
-
-  const marker = options.marker ?? inferred.marker;
-
-  installSessionStartHooks({
-    marker,
-    execPath: options.execPath ?? inferred.execPath,
-    binaryNames: options.binaryNames ?? inferred.binaryNames,
-    homeDir: options.homeDir,
-    timeoutSeconds: options.timeoutSeconds,
-    shouldInstall:
-      options.shouldInstall ??
-      buildHookInstallPolicy(marker, options, inferred),
-    onError: options.onError,
-  });
-}
-
-function buildHookInstallPolicy(
-  marker: string,
-  options: AxiCliHookOptions,
-  inferred: InferredHookOptions,
-): ((execPath: string) => boolean) | undefined {
-  const binaryNames = options.binaryNames ?? inferred.binaryNames;
-  const distEntrypoints = options.distEntrypoints ?? inferred.distEntrypoints;
-
-  return (execPath: string) =>
-    shouldInstallHooksForNodeAxiExecPath(execPath, {
-      marker,
-      binaryNames,
-      distEntrypoints,
-    });
-}
-
-interface InferredHookOptions {
-  execPath: string;
-  marker: string;
-  binaryNames: string[];
-  distEntrypoints: string[];
-}
-
-function inferHookOptions(
-  execPath: string | undefined,
-): InferredHookOptions | undefined {
-  if (!execPath) {
-    return undefined;
-  }
-
-  const normalized = execPath.replaceAll("\\", "/");
-  const match = normalized.match(/(?:^|\/)dist\/bin\/([^/]+)\.js$/);
-  if (match?.[1]) {
-    const marker = match[1];
-    return {
-      execPath,
-      marker,
-      binaryNames: [marker],
-      distEntrypoints: [`dist/bin/${marker}.js`],
-    };
-  }
-
-  const fileName = normalized.split("/").pop() ?? "";
-  if (!fileName || fileName.includes(".") || fileName === "node") {
-    return undefined;
-  }
-
-  return {
-    execPath,
-    marker: fileName,
-    binaryNames: [fileName],
-    distEntrypoints: [`dist/bin/${fileName}.js`],
-  };
 }
 
 function renderCommandOutput<TContext>(
