@@ -55,8 +55,8 @@ await runAxiCli({
 
 `axi-sdk-js` is a library package. In normal use, `runAxiCli()` should be the main entry point.
 
-| API           | Description                                                                                                                                                                                                           |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| API           | Description                                                                                                                                                                  |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `runAxiCli()` | Shared runtime for command-first dispatch, bare `--help`/`--version` fast paths, lazy context resolution, home header injection, TOON serialization, and standardized errors |
 
 ### Advanced Exports
@@ -84,7 +84,10 @@ await runAxiCli({
   commands: {
     setup: async (args) => {
       if (args[0] !== "hooks") {
-        return { error: "Unknown setup command", help: "Run `my-axi setup hooks`" };
+        return {
+          error: "Unknown setup command",
+          help: "Run `my-axi setup hooks`",
+        };
       }
 
       installSessionStartHooks();
