@@ -502,11 +502,15 @@ export function installSessionStartHooks(
     return;
   }
 
+  const defaultPolicyOptions = inferred ?? {
+    execPath,
+    marker,
+    binaryNames: [marker],
+    distEntrypoints: [`dist/bin/${marker}.js`],
+  };
   const shouldInstall =
     options.shouldInstall ??
-    (inferred
-      ? buildInferredHookInstallPolicy(marker, options, inferred)
-      : undefined);
+    buildInferredHookInstallPolicy(marker, options, defaultPolicyOptions);
   if (shouldInstall && !shouldInstall(execPath)) {
     return;
   }

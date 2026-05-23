@@ -386,6 +386,21 @@ describe("installSessionStartHooks (portable command)", () => {
     expect(existsSync(join(home, ".claude", "settings.json"))).toBe(false);
   });
 
+  it("skips explicit marker hooks for development TypeScript entrypoints", () => {
+    const home = join(tmp, "home");
+    const execFile = join(tmp, "gh-axi", "bin", "gh-axi.ts");
+    mkdirSync(join(tmp, "gh-axi", "bin"), { recursive: true });
+    writeFileSync(execFile, "// stub\n", "utf-8");
+
+    installSessionStartHooks({
+      marker: "gh-axi",
+      execPath: execFile,
+      homeDir: home,
+    });
+
+    expect(existsSync(join(home, ".claude", "settings.json"))).toBe(false);
+  });
+
   it("writes the plain binary name when a PATH symlink points at the exec file", () => {
     const home = join(tmp, "home");
     const pkgBin = join(tmp, "pkg", "dist", "bin");
