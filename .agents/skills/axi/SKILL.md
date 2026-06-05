@@ -168,7 +168,10 @@ help[2]:
 
 **Also ship an installable skill (secondary recommendation):**
 
-The session hook is the primary integration, but it only helps agents whose harness supports hooks, and it loads on _every_ session. Offer an installable [Agent Skill](https://agentskills.io) as a secondary discovery path. It loads on demand when the agent recognizes a matching task, carries no per-session token cost, and works in any agent that supports the skill format. Recommend the hook first (ambient context plus live state) and the skill second (lower overhead, broader agent support) — they are complementary, and a user installs whichever fits, or both.
+The session hook is the primary integration, but it only helps agents whose harness supports hooks, and it loads on _every_ session.
+Offer an installable [Agent Skill](https://agentskills.io) as a secondary discovery path.
+It loads on demand when the agent recognizes a matching task, carries no per-session token cost, and works in any agent that supports the skill format.
+Recommend the hook first (ambient context plus live state) and the skill second (lower overhead, broader agent support) - they are complementary, and a user installs whichever fits, or both.
 
 ```sh
 npx skills add <owner>/<repo> --skill <name>

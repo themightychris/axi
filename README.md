@@ -14,7 +14,7 @@
 
 AI agents interact with external services through two dominant paradigms today: **CLIs** which were originally built for humans, and structured tool protocols like **MCP**. Both impose significant overhead.
 
-AXI is a **new paradigm** — agent-native CLI tools built from **10 design principles** that treat token budget as a first-class constraint.
+AXI is a **new paradigm** - agent-native CLI tools built from **10 design principles** that treat token budget as a first-class constraint.
 
 ## Results
 
@@ -74,7 +74,7 @@ These principles define what makes a CLI tool "an AXI":
 | 4   | **Pre-computed aggregates**        | Include aggregated counts and statuses that eliminate round trips           |
 | 5   | **Definitive empty states**        | Explicit "0 results" rather than ambiguous empty output                     |
 | 6   | **Structured errors & exit codes** | Idempotent mutations, structured errors, no interactive prompts             |
-| 7   | **Ambient context**                | Install opt-in session integrations so agents see state before invoking     |
+| 7   | **Ambient context**                | Install opt-in session integrations first, then offer an on-demand skill    |
 | 8   | **Content first**                  | Running with no arguments shows live data, not help text                    |
 | 9   | **Contextual disclosure**          | Include next-step suggestions after each output                             |
 | 10  | **Consistent way to get help**     | Concise per-subcommand reference when agents need it                        |
@@ -87,7 +87,9 @@ Install the AXI skill to get the design guidelines and scaffolding for building 
 npx skills add kunchenguid/axi
 ```
 
-This installs the [AXI skill](.agents/skills/axi/SKILL.md) — a detailed guide with examples for each principle that your coding agent can reference while building.
+This installs the [AXI skill](.agents/skills/axi/SKILL.md) - a detailed guide with examples for each principle that your coding agent can reference while building.
+For your own AXI, expose an explicit setup command for session hooks as the primary integration, then ship an installable Agent Skill as a lower-overhead secondary path.
+Users only need one path, but hooks and skills complement each other when both are available.
 
 ## Development
 
