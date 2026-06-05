@@ -166,6 +166,20 @@ help[2]:
 - **Codex**: use native hooks in `~/.codex/hooks.json` or `<repo>/.codex/hooks.json`, and ensure `[features].hooks = true` in `config.toml`. Prefer `SessionStart` for ambient context via stdout
 - **OpenCode**: use a managed plugin in `~/.config/opencode/plugins/`. Prefer ambient system-context injection for the home view rather than adding a custom tool
 
+**Also ship an installable skill (secondary recommendation):**
+
+The session hook is the primary integration, but it only helps agents whose harness supports hooks, and it loads on _every_ session. Offer an installable [Agent Skill](https://agentskills.io) as a secondary discovery path. It loads on demand when the agent recognizes a matching task, carries no per-session token cost, and works in any agent that supports the skill format. Recommend the hook first (ambient context plus live state) and the skill second (lower overhead, broader agent support) — they are complementary, and a user installs whichever fits, or both.
+
+```sh
+npx skills add <owner>/<repo> --skill <name>
+```
+
+- **Single source of truth**: generate `SKILL.md` from the same content your no-args home view prints, so the skill never drifts from the CLI's own guidance. Add a `--check` build step to CI that fails if the committed skill is stale
+- **Strip live state**: a skill is static, so omit dynamic data (open sessions, current items) that only the hook can show
+- **Non-interactive commands**: rewrite command examples to a form the agent can run without a global install (e.g. `npx -y mytool ...`), since a skill may be installed without the binary on PATH
+- **Trigger-shaped frontmatter**: include `name` and a `description` written as a trigger — terse and outcome-focused so the agent loads it on the right intent
+- **Document both paths**: in your README, present the hook and the skill as two ways to achieve the same thing, and make clear the user only needs one
+
 ## 8. Content first
 
 Running your CLI with no arguments should show the most relevant live content — not a usage manual.
