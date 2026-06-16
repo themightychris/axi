@@ -87,26 +87,26 @@ These principles define what makes a CLI tool "an AXI":
 
 Reference implementations maintained by the AXI project, validating the principles across different domains:
 
-| AXI                                                                       | Domain             | What it does                                                                                              |
-| ------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------- |
-| [`gh-axi`](https://github.com/kunchenguid/gh-axi)                         | GitHub             | Issues, PRs, workflow runs, releases, and more. Wraps the official `gh` CLI with agent-ergonomic output.  |
-| [`chrome-devtools-axi`](https://github.com/kunchenguid/chrome-devtools-axi) | Browser automation | Navigate, click, fill, and extract with combined operations and query filtering. Wraps chrome-devtools-mcp. |
-| [`lavish-axi`](https://github.com/kunchenguid/lavish-axi)                 | Human review       | Turns agent-generated HTML artifacts into collaborative review surfaces - annotate, comment, and send feedback back to the agent. |
+| AXI                                                                         | Domain             | What it does                                                                                                                      |
+| --------------------------------------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| [`gh-axi`](https://github.com/kunchenguid/gh-axi)                           | GitHub             | Issues, PRs, workflow runs, releases, and more. Wraps the official `gh` CLI with agent-ergonomic output.                          |
+| [`chrome-devtools-axi`](https://github.com/kunchenguid/chrome-devtools-axi) | Browser automation | Navigate, click, fill, and extract with combined operations and query filtering. Wraps chrome-devtools-mcp.                       |
+| [`lavish-axi`](https://github.com/kunchenguid/lavish-axi)                   | Human review       | Turns agent-generated HTML artifacts into collaborative review surfaces - annotate, comment, and send feedback back to the agent. |
 
 ### Community
 
 AXIs built and maintained by the community:
 
-| AXI                                                                | Author             | Domain | What it does                                                                       |
-| ------------------------------------------------------------------ | ------------------ | ------ | ----------------------------------------------------------------------------------- |
-| [`npm-axi`](https://github.com/SSBrouhard/npm-axi)                 | SSBrouhard         | npm    | Search and inspect npm registry packages, versions, dependencies, README previews, and downloads with token-efficient output. |
-| [`slack-axi`](https://github.com/JarvusInnovations/slack-axi)      | Jarvus Innovations | Slack           | Read, search, sweep, and safely draft Slack messages with token-efficient output.  |
-| [`gws-axi`](https://github.com/JarvusInnovations/gws-axi)          | Jarvus Innovations | Google Workspace | Gmail, Calendar, Docs, Drive, and Slides behind one command, with multi-account write-safety - drafts mail, never sends. |
-| [`harvest-axi`](https://github.com/JarvusInnovations/harvest-axi)  | Jarvus Innovations | Time tracking   | Review, log, and edit Harvest time entries by period - for yourself, your team, a project, or a client. |
-| [`specops`](https://github.com/JarvusInnovations/specops)          | Jarvus Innovations | Spec-driven dev | Spec-driven development for agents - and a demo of shipping an AXI embedded in a skill, not a standalone npm executable. |
-| [`gitsheets-axi`](https://github.com/JarvusInnovations/gitsheets/tree/main/packages/gitsheets-axi) | Jarvus Innovations | Git-backed data | Read and mutate git-backed record sheets over the shell - TOON output, idempotent commits. |
+| AXI                                                                                                | Author             | Domain           | What it does                                                                                                                  |
+| -------------------------------------------------------------------------------------------------- | ------------------ | ---------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| [`npm-axi`](https://github.com/SSBrouhard/npm-axi)                                                 | SSBrouhard         | npm              | Search and inspect npm registry packages, versions, dependencies, README previews, and downloads with token-efficient output. |
+| [`slack-axi`](https://github.com/JarvusInnovations/slack-axi)                                      | Jarvus Innovations | Slack            | Read, search, sweep, and safely draft Slack messages with token-efficient output.                                             |
+| [`gws-axi`](https://github.com/JarvusInnovations/gws-axi)                                          | Jarvus Innovations | Google Workspace | Gmail, Calendar, Docs, Drive, and Slides behind one command, with multi-account write-safety - drafts mail, never sends.      |
+| [`harvest-axi`](https://github.com/JarvusInnovations/harvest-axi)                                  | Jarvus Innovations | Time tracking    | Review, log, and edit Harvest time entries by period - for yourself, your team, a project, or a client.                       |
+| [`specops`](https://github.com/JarvusInnovations/specops)                                          | Jarvus Innovations | Spec-driven dev  | Spec-driven development for agents - and a demo of shipping an AXI embedded in a skill, not a standalone npm executable.      |
+| [`gitsheets-axi`](https://github.com/JarvusInnovations/gitsheets/tree/main/packages/gitsheets-axi) | Jarvus Innovations | Git-backed data  | Read and mutate git-backed record sheets over the shell - TOON output, idempotent commits.                                    |
 
-Built an AXI? [Open a PR](https://github.com/kunchenguid/axi/pulls) to add it to this list.
+Built an AXI? Follow the [contributor workflow](CONTRIBUTING.md) to add it to this list.
 
 ## Build Your Own AXI
 
@@ -164,6 +164,10 @@ pnpm --dir bench-github run bench -- report
 ```
 
 Published results (425 runs): [`bench-github/published-results/STUDY.md`](bench-github/published-results/STUDY.md)
+
+## Contributing
+
+Contributions targeting `main` must be submitted through the [contributor workflow](CONTRIBUTING.md), which uses `no-mistakes` and guards release-please-generated files from hand edits.
 
 ## Links
 

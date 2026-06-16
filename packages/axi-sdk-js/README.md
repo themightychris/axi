@@ -118,8 +118,13 @@ For custom wrappers, pass `binaryNames: ["my-axi"]` to `installSessionStartHooks
 
 ## Development
 
+Repository contributions targeting `main` must follow the root [contributor workflow](../../CONTRIBUTING.md).
+Before pushing SDK changes, run the same package checks that CI runs:
+
 ```sh
 pnpm install # Install workspace dependencies
+pnpm run format:check # Check formatting
+pnpm run lint # Lint SDK sources and tests
 pnpm --dir packages/axi-sdk-js test # Run tests
 pnpm --dir packages/axi-sdk-js run build # Build dist output
 ```
