@@ -100,7 +100,11 @@ AXIs built and maintained by the community:
 | AXI                                                                | Author             | Domain | What it does                                                                       |
 | ------------------------------------------------------------------ | ------------------ | ------ | ----------------------------------------------------------------------------------- |
 | [`npm-axi`](https://github.com/SSBrouhard/npm-axi)                 | SSBrouhard         | npm    | Search and inspect npm registry packages, versions, dependencies, README previews, and downloads with token-efficient output. |
-| [`slack-axi`](https://github.com/JarvusInnovations/slack-axi)      | Jarvus Innovations | Slack  | Read, search, sweep, and safely draft Slack messages with token-efficient output.  |
+| [`slack-axi`](https://github.com/JarvusInnovations/slack-axi)      | Jarvus Innovations | Slack           | Read, search, sweep, and safely draft Slack messages with token-efficient output.  |
+| [`gws-axi`](https://github.com/JarvusInnovations/gws-axi)          | Jarvus Innovations | Google Workspace | Gmail, Calendar, Docs, Drive, and Slides behind one command, with multi-account write-safety - drafts mail, never sends. |
+| [`harvest-axi`](https://github.com/JarvusInnovations/harvest-axi)  | Jarvus Innovations | Time tracking   | Review, log, and edit Harvest time entries by period - for yourself, your team, a project, or a client. |
+| [`specops`](https://github.com/JarvusInnovations/specops)          | Jarvus Innovations | Spec-driven dev | Spec-driven development for agents - and a demo of shipping an AXI embedded in a skill, not a standalone npm executable. |
+| [`gitsheets-axi`](https://github.com/JarvusInnovations/gitsheets/tree/main/packages/gitsheets-axi) | Jarvus Innovations | Git-backed data | Read and mutate git-backed record sheets over the shell - TOON output, idempotent commits. |
 
 Built an AXI? [Open a PR](https://github.com/kunchenguid/axi/pulls) to add it to this list.
 
