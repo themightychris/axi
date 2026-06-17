@@ -59,3 +59,5 @@ Requires Node.js >= 20 and `gh` CLI installed and authenticated.
 
 - Packages use ES modules (`"type": "module"`) with TypeScript targeting ES2022/Node16.
 - Tests are colocated in `test/` directories mirroring `src/` structure and use vitest.
+- Pull requests targeting `main` must be raised through `no-mistakes` (enforced by the `Require no-mistakes` check). See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+- Do not hand-edit `packages/axi-sdk-js/CHANGELOG.md` or `.release-please-manifest.json`; release-please regenerates them from conventional commits, and the `Guard generated files` check rejects manual edits.
