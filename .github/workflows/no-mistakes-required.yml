@@ -21,6 +21,13 @@ jobs:
     # - github-actions[bot] opens the release-please PR via GITHUB_TOKEN
     # - dependabot[bot] opens dependency update PRs
     # Other authors must raise PRs through `git push no-mistakes`.
+    #
+    # Branch-protection caveat: the release-please PR is opened with
+    # GITHUB_TOKEN, and GitHub does not trigger pull_request workflows for
+    # GITHUB_TOKEN-authored events. This check therefore never runs (and the
+    # exemption above never executes) on the release PR. Do NOT add this check
+    # to branch protection as a required status check, or the release PR will
+    # be stuck waiting on a status that can never report. See CONTRIBUTING.md.
     if: >-
       github.event.pull_request.user.login != 'github-actions[bot]' &&
       github.event.pull_request.user.login != 'dependabot[bot]' &&

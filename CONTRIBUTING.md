@@ -15,6 +15,11 @@ The release and dependency bots are exempt so their automation keeps working, bu
 A second GitHub Actions check (`Guard generated files`) fails PRs that hand-edit release-please-generated files.
 Release-please PRs are exempt because they are the only place those files should change.
 
+> **Maintainers:** Both checks run on the `pull_request` event, which GitHub does not fire for PRs opened by `GITHUB_TOKEN`.
+> The release-please PR is opened that way, so these checks never run on it.
+> Do **not** add `Require no-mistakes` or `Guard generated files` to branch protection as required status checks — the release PR would block forever waiting on a status that can never report.
+> If you need them required, open the release PR with a PAT or GitHub App token (so it triggers workflows) and update the author exemptions in both workflows to match that account.
+
 ## Workflow
 
 1. Fork the repo and clone your fork.
