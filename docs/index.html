@@ -674,7 +674,8 @@
             </li>
             <li>
               <strong>Structured errors &amp; exit codes</strong> &mdash;
-              Idempotent mutations, structured errors, no interactive prompts
+              Idempotent mutations, structured errors, no interactive prompts,
+              fail loud on unknown flags
             </li>
             <li>
               <strong>Ambient context</strong> &mdash; Install opt-in session
@@ -795,6 +796,10 @@ pull_request:
           written to stdout (not stderr), and commands must never prompt for
           interactive input. Reserve stdout for structured data and stderr for
           debug/log output. Use clean exit codes: 0 for success, 1 for errors.
+          Unknown flags must fail loud (exit 2) rather than be silently
+          ignored &mdash; the same guarantee a CLI already gives for an unknown
+          command &mdash; so an agent that invents a flag learns it did nothing
+          instead of trusting unscoped output.
         </p>
 
         <!-- Discoverability -->
