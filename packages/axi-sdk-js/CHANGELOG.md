@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.1.11](https://github.com/themightychris/axi/compare/axi-sdk-js-v0.1.10...axi-sdk-js-v0.1.11) (2026-08-11)
+
+
+### Features
+
+* axi-sdk-js ([#18](https://github.com/themightychris/axi/issues/18)) ([309ef60](https://github.com/themightychris/axi/commit/309ef60c25cc0843764245cd2fc65f5a1f918d00))
+* **axi-sdk-js:** add built-in self-update command ([#60](https://github.com/themightychris/axi/issues/60)) ([d6560fc](https://github.com/themightychris/axi/commit/d6560fca9e6dd8fdd9672bb8fa49e740ca86658f))
+* **axi-sdk-js:** add dependency-free version fast path ([#124](https://github.com/themightychris/axi/issues/124)) ([0802fa8](https://github.com/themightychris/axi/commit/0802fa8563e1c744b93464ad6dd5ef3facd7ee6d))
+* **axi-sdk-js:** add OpenCode ambient integration ([#38](https://github.com/themightychris/axi/issues/38)) ([fc54e94](https://github.com/themightychris/axi/commit/fc54e9476210f5f6b20ed27a8b370142eac63a1e))
+* better encapsulation of args handling in sdk ([#21](https://github.com/themightychris/axi/issues/21)) ([c7414b5](https://github.com/themightychris/axi/commit/c7414b50f20b1dd6c28b0f10007f3f8fd761e116))
+* **cli:** add explicit argv support ([#25](https://github.com/themightychris/axi/issues/25)) ([7b1202b](https://github.com/themightychris/axi/commit/7b1202b1be9a4c1349e16630dc1b99aede827f54))
+* **cli:** add version flag support ([#23](https://github.com/themightychris/axi/issues/23)) ([e05e312](https://github.com/themightychris/axi/commit/e05e312c5341175c1babe1a0c067a60a773f75f9))
+
+
+### Bug Fixes
+
+* **axi-sdk-js:** install portable session hook commands ([#33](https://github.com/themightychris/axi/issues/33)) ([fb5ae20](https://github.com/themightychris/axi/commit/fb5ae200f2710bfb65cac00fff995c88d79f8f32))
+* **axi-sdk-js:** make session hook setup explicit ([#42](https://github.com/themightychris/axi/issues/42)) ([66a68a2](https://github.com/themightychris/axi/commit/66a68a2e42f2506879fb5e53eca9c5d41314c83f))
+* **axi-sdk-js:** resolve portable hook command from npm wrapper shims ([#67](https://github.com/themightychris/axi/issues/67)) ([eddde85](https://github.com/themightychris/axi/commit/eddde85bcd6035d2e1390596aff2af2daa10b1a3))
+* use canonical Codex hooks feature ([81a8dc7](https://github.com/themightychris/axi/commit/81a8dc79760f8fb06988275fc8973dcf5a678d81))
+* write canonical Codex hooks config key ([99e2e66](https://github.com/themightychris/axi/commit/99e2e66ea5081eeb32d2e2f3fc50582715941552))
+
 ## [0.1.10](https://github.com/kunchenguid/axi/compare/axi-sdk-js-v0.1.9...axi-sdk-js-v0.1.10) (2026-08-06)
 
 
